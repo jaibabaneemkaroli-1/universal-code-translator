@@ -128,7 +128,6 @@ align-items: center;
 select, button {
 padding: 12px 24px;
 border-radius: 8px;
-border: none;
 font-size: 16px;
 cursor: pointer;
 transition: all 0.3s;
@@ -139,6 +138,19 @@ background: white;
 border: 2px solid #667eea;
 color: #667eea;
 font-weight: 500;
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+padding-right: 40px;
+background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+background-repeat: no-repeat;
+background-position: right 12px center;
+background-size: 20px;
+}
+
+/* Force dropdown to show all options with scroll */
+select {
+overflow-y: auto !important;
 }
 
 button {
@@ -146,6 +158,7 @@ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 color: white;
 font-weight: bold;
 box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+border: none;
 }
 
 button:hover:not(:disabled) {
@@ -255,6 +268,12 @@ font-size: 1.5em;
 color: #667eea;
 font-weight: bold;
 }
+
+.lang-count {
+font-size: 0.85em;
+color: #888;
+margin-left: 8px;
+}
 </style>
 </head>
 <body>
@@ -273,9 +292,9 @@ font-weight: bold;
 
 <div class="main-content">
 <div class="panel">
-<h2>📝 Input Code</h2>
+<h2>📝 Input Code <span class="lang-count">(11 source languages)</span></h2>
 <div class="controls">
-<select id="sourceLanguage">
+<select id="sourceLanguage" size="11">
 <option value="javascript">JavaScript</option>
 <option value="typescript">TypeScript</option>
 <option value="python">Python</option>
@@ -289,7 +308,7 @@ font-weight: bold;
 <option value="scala">Scala</option>
 </select>
 <span class="arrow">→</span>
-<select id="targetLanguage">
+<select id="targetLanguage" size="12">
 <option value="haskell">Haskell</option>
 <option value="rust">Rust</option>
 <option value="go">Go</option>
@@ -303,7 +322,7 @@ font-weight: bold;
 <option value="zig">Zig</option>
 <option value="nim">Nim</option>
 </select>
-<button id="translateBtn" onclick="translate()">🔄 Translate</button>
+<button id="translateBtn">🔄 Translate</button>
 </div>
 <textarea id="inputCode" placeholder="Paste your code here...
 
@@ -315,7 +334,7 @@ Try translating:
 </div>
 
 <div class="panel">
-<h2>✨ Translated Code + Reasoning</h2>
+<h2>✨ Translated Code + Reasoning <span class="lang-count">(12 target languages)</span></h2>
 <div class="output" id="output">
 <div style="color: #999; padding: 40px; text-align: center;">
 <strong>Universal Code Translator</strong>
@@ -339,6 +358,9 @@ With complete reasoning chains showing:
 ✓ Grammar transformations
 <br>
 ✓ Synthesis points explained
+<br><br>
+
+<strong>132 total language pairs (11 × 12)</strong>
 <br><br>
 
 <strong>Add your Claude API key above to start.</strong>
@@ -466,7 +488,6 @@ return [];
 function loadExample(name) {
 document.getElementById('inputCode').value = EXAMPLES[name];
 
-// Auto-select appropriate source language
 if (name === 'class' || name === 'decorator') {
 document.getElementById('sourceLanguage').value = 'python';
 } else {
@@ -593,7 +614,6 @@ const translation = data.content[0].text;
 
 output.innerHTML = `<pre>${translation}</pre>`;
 
-// Save API key for next time
 localStorage.setItem('claudeApiKey', apiKey);
 
 } catch (error) {
@@ -604,16 +624,19 @@ btn.disabled = false;
 }
 
 // Load saved API key on page load
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', function() {
 const savedKey = localStorage.getItem('claudeApiKey');
 if (savedKey) {
 document.getElementById('apiKey').value = savedKey;
 document.getElementById('apiKeyStatus').innerHTML = '<div class="success-msg">✓ API key loaded from previous session</div>';
 }
+
+// Attach translate button click handler
+document.getElementById('translateBtn').addEventListener('click', translate);
 });
 
 // Save API key when changed
-document.getElementById('apiKey').addEventListener('change', (e) => {
+document.getElementById('apiKey').addEventListener('change', function(e) {
 if (e.target.value.trim()) {
 localStorage.setItem('claudeApiKey', e.target.value.trim());
 document.getElementById('apiKeyStatus').innerHTML = '<div class="success-msg">✓ API key saved</div>';
