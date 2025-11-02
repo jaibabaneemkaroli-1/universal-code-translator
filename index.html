@@ -516,27 +516,104 @@ btn.disabled = true;
 output.innerHTML = '<div class="loading"><div class="spinner"></div>Translating using Cultural Grammar Synthesis...<br><small>Extracting structural invariants and synthesizing to target paradigm</small></div>';
 
 try {
-// Call our backend API instead of Anthropic directly (fixes CORS)
-const response = await fetch('/api/translate', {
+const prompt = `You are a universal code translator using "Cultural Grammar Synthesis" methodology.
+
+Translate this ${sourceLang} code to idiomatic ${targetLang} code.
+
+CRITICAL INSTRUCTIONS:
+
+1. IDENTIFY STRUCTURAL INVARIANTS (what MUST be preserved):
+- State management patterns
+- Effect handling patterns
+- Composition patterns
+- Control flow semantics
+- Error handling semantics
+
+2. EXTRACT SOURCE GRAMMAR:
+- How does ${sourceLang} organize these invariants?
+- What paradigm patterns does it use?
+- What are the idioms?
+
+3. SYNTHESIZE TARGET GRAMMAR:
+- How does ${targetLang} idiomatically express the same invariants?
+- What are the native patterns?
+- Translate paradigm, not just syntax
+
+4. PRODUCE IDIOMATIC CODE:
+- Must feel native to ${targetLang}
+- Must preserve all semantic behavior
+- Must be genuinely usable
+
+Format your response EXACTLY like this:
+
+✨ TRANSLATED CODE (${targetLang}):
+
+[Complete, idiomatic, working ${targetLang} code here]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧠 SYNTHESIS POINTS:
+
+✓ [Pattern 1]: ${sourceLang} [approach] → ${targetLang} [approach]
+Rationale: [Why this preserves the invariant]
+
+✓ [Pattern 2]: ${sourceLang} [approach] → ${targetLang} [approach]
+Rationale: [Why this preserves the invariant]
+
+[Continue for all key transformations]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 KEY INSIGHT:
+
+[2-3 sentences explaining what makes this translation work - the core paradigm shift]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚖️ TRADE-OFFS:
+
+GAINED: [What the target paradigm gives you]
+LOST: [What's different/harder]
+MITIGATION: [How to address what's lost]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Source code to translate:
+
+\`\`\`${sourceLang}
+${inputCode}
+\`\`\`
+
+Make the ${targetLang} code genuinely idiomatic and production-quality.`;
+
+// Use CORS proxy to bypass browser restrictions
+const corsProxy = 'https://corsproxy.io/?';
+const apiUrl = corsProxy + encodeURIComponent('https://api.anthropic.com/v1/messages');
+
+const response = await fetch(apiUrl, {
 method: 'POST',
 headers: {
-'Content-Type': 'application/json'
+'Content-Type': 'application/json',
+'x-api-key': apiKey,
+'anthropic-version': '2023-06-01'
 },
 body: JSON.stringify({
-apiKey: apiKey,
-sourceLang: sourceLang,
-targetLang: targetLang,
-code: inputCode
+model: 'claude-sonnet-4-20250514',
+max_tokens: 8192,
+messages: [{
+role: 'user',
+content: prompt
+}]
 })
 });
 
 if (!response.ok) {
 const error = await response.json();
-throw new Error(error.error || 'Translation failed');
+throw new Error(error.error?.message || 'API request failed');
 }
 
 const data = await response.json();
-const translation = data.translation;
+const translation = data.content[0].text;
 
 output.innerHTML = `<pre>${translation}</pre>`;
 
