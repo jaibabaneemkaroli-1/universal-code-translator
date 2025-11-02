@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universal Code Translator | Cultural Grammar Synthesis</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+min-height: 100vh;
+padding: 20px;
+}
+
+.container {
+max-width: 1400px;
+margin: 0 auto;
+}
+
+header {
+text-align: center;
+color: white;
+margin-bottom: 40px;
+}
+
+h1 {
+font-size: 3em;
+margin-bottom: 10px;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.subtitle {
+font-size: 1.2em;
+opacity: 0.9;
+}
+
+.api-key-section {
+background: rgba(255,255,255,0.95);
+border-radius: 12px;
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.api-key-section p {
+margin-bottom: 12px;
+color: #333;
+}
+
+.api-key-section input {
+width: 100%;
+padding: 12px;
+border: 2px solid #667eea;
+border-radius: 8px;
+font-size: 14px;
+font-family: monospace;
+}
+
+.api-key-section small {
+display: block;
+margin-top: 8px;
+color: #666;
+}
+
+.api-key-section a {
+color: #667eea;
+text-decoration: none;
+font-weight: bold;
+}
+
+.main-content {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+.main-content {
+grid-template-columns: 1fr;
+}
+}
+
+.panel {
+background: white;
+border-radius: 12px;
+padding: 24px;
+box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.panel h2 {
+color: #667eea;
+margin-bottom: 16px;
+font-size: 1.5em;
+}
+
+textarea {
+width: 100%;
+min-height: 400px;
+padding: 16px;
+border: 2px solid #e0e0e0;
+border-radius: 8px;
+font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+font-size: 14px;
+resize: vertical;
+transition: border-color 0.3s;
+}
+
+textarea:focus {
+outline: none;
+border-color: #667eea;
+}
+
+.controls {
+display: flex;
+gap: 12px;
+margin: 16px 0;
+flex-wrap: wrap;
+}
+
+select, button {
+padding: 12px 24px;
+border-radius: 8px;
+border: none;
+font-size: 16px;
+cursor: pointer;
+transition: all 0.3s;
+}
+
+select {
+background: white;
+border: 2px solid #667eea;
+color: #667eea;
+}
+
+button {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+font-weight: bold;
+box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+button:hover:not(:disabled) {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+button:disabled {
+opacity: 0.5;
+cursor: not-allowed;
+transform: none;
+}
+
+.output {
+background: #f8f9fa;
+border-radius: 8px;
+padding: 16px;
+min-height: 400px;
+font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+font-size: 14px;
+white-space: pre-wrap;
+overflow-x: auto;
+line-height: 1.6;
+}
+
+.loading {
+text-align: center;
+padding: 40px;
+color: #667eea;
+}
+
+.spinner {
+border: 4px solid #f3f3f3;
+border-top: 4px solid #667eea;
+border-radius: 50%;
+width: 40px;
+height: 40px;
+animation: spin 1s linear infinite;
+margin: 0 auto 16px;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+.examples {
+background: white;
+border-radius: 12px;
+padding: 24px;
+margin-top: 20px;
+box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.examples h3 {
+color: #667eea;
+margin-bottom: 16px;
+}
+
+.example-btn {
+background: #f8f9fa;
+color: #667eea;
+border: 2px solid #667eea;
+padding: 8px 16px;
+margin: 8px 8px 8px 0;
+border-radius: 6px;
+cursor: pointer;
+font-size: 14px;
+}
+
+.example-btn:hover {
+background: #667eea;
+color: white;
+}
+
+.footer {
+text-align: center;
+color: white;
+margin-top: 40px;
+opacity: 0.8;
+}
+
+.footer a {
+color: white;
+text-decoration: none;
+border-bottom: 1px solid rgba(255,255,255,0.5);
+}
+
+.error {
+background: #fee;
+color: #c00;
+padding: 16px;
+border-radius: 8px;
+margin: 16px 0;
+}
+
+.success-msg {
+background: #efe;
+color: #060;
+padding: 12px;
+border-radius: 6px;
+margin-top: 8px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🚀 Universal Code Translator</h1>
+<p class="subtitle">Cultural Grammar Synthesis for Code</p>
+</header>
+
+<div class="api-key-section">
+<p><strong>🔑 Claude API Key Required</strong></p>
+<input type="password" id="apiKey" placeholder="sk-ant-..." />
+<small>Get your API key from <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a>. Your key stays in your browser and is never sent anywhere except Anthropic's API.</small>
+<div id="apiKeyStatus"></div>
+</div>
+
+<div class="main-content">
+<div class="panel">
+<h2>📝 Input Code</h2>
+<div class="controls">
+<select id="sourceLanguage">
+<option value="javascript">JavaScript</option>
+<option value="python">Python</option>
+<option value="java">Java</option>
+</select>
+<span style="padding: 12px;">→</span>
+<select id="targetLanguage">
+<option value="haskell">Haskell</option>
+<option value="rust">Rust</option>
+<option value="python">Python</option>
+<option value="go">Go</option>
+</select>
+<button id="translateBtn" onclick="translate()">Translate</button>
+</div>
+<textarea id="inputCode" placeholder="Paste your code here..."></textarea>
+</div>
+
+<div class="panel">
+<h2>✨ Translated Code + Reasoning</h2>
+<div class="output" id="output">
+<div style="color: #999; padding: 40px; text-align: center;">
+Translation will appear here with full reasoning chains showing how structural invariants are preserved across paradigms.
+
+<br><br>
+<strong>Add your Claude API key above to start translating.</strong>
+</div>
+</div>
+</div>
+</div>
+
+<div class="examples">
+<h3>💡 Try These Examples:</h3>
+<button class="example-btn" onclick="loadExample('repository')">Repository Pattern</button>
+<button class="example-btn" onclick="loadExample('events')">Event System</button>
+<button class="example-btn" onclick="loadExample('api')">API Client</button>
+<button class="example-btn" onclick="loadExample('simple')">Simple Class</button>
+</div>
+
+<div class="footer">
+<p>Built with Cultural Grammar Synthesis | <a href="https://github.com/jaibabaneemkaroli-1/universal-code-translator">View on GitHub</a></p>
+<p style="margin-top: 8px; font-size: 0.9em;">Same method works for music, architecture, and any cultural artifacts with deep structure.</p>
+</div>
+</div>
+
+<script>
+const EXAMPLES = {
+repository: `class UserRepository {
+constructor(db) {
+this.db = db;
+this.cache = new Map();
+}
+
+async getUser(id) {
+if (this.cache.has(id)) {
+return this.cache.get(id);
+}
+const user = await this.db.query('SELECT * FROM users WHERE id = ?', [id]);
+this.cache.set(id, user);
+return user;
+}
+
+invalidate(id) {
+this.cache.delete(id);
+}
+}`,
+events: `class EventBus {
+constructor() {
+this.listeners = new Map();
+}
+
+on(event, callback) {
+if (!this.listeners.has(event)) {
+this.listeners.set(event, []);
+}
+this.listeners.get(event).push(callback);
+}
+
+emit(event, data) {
+if (this.listeners.has(event)) {
+this.listeners.get(event).forEach(cb => cb(data));
+}
+}
+}`,
+api: `class ApiClient {
+constructor(baseUrl, apiKey) {
+this.baseUrl = baseUrl;
+this.apiKey = apiKey;
+}
+
+async get(endpoint) {
+const url = \`\${this.baseUrl}\${endpoint}\`;
+const response = await fetch(url, {
+headers: { 'Authorization': \`Bearer \${this.apiKey}\` }
+});
+return await response.json();
+}
+}`,
+simple: `class Counter {
+constructor() {
+this.count = 0;
+}
+
+increment() {
+this.count++;
+}
+
+getCount() {
+return this.count;
+}
+}`
+};
+
+function loadExample(name) {
+document.getElementById('inputCode').value = EXAMPLES[name];
+}
+
+async function translate() {
+const apiKey = document.getElementById('apiKey').value.trim();
+const inputCode = document.getElementById('inputCode').value;
+const sourceLang = document.getElementById('sourceLanguage').value;
+const targetLang = document.getElementById('targetLanguage').value;
+const output = document.getElementById('output');
+const btn = document.getElementById('translateBtn');
+
+if (!apiKey) {
+output.innerHTML = '<div class="error">Please enter your Claude API key above</div>';
+return;
+}
+
+if (!inputCode.trim()) {
+output.innerHTML = '<div class="error">Please enter some code to translate</div>';
+return;
+}
+
+btn.disabled = true;
+output.innerHTML = '<div class="loading"><div class="spinner"></div>Translating using Cultural Grammar Synthesis...<br><small>Extracting structural invariants and synthesizing to target paradigm</small></div>';
+
+try {
+const prompt = `You are a code translator using "Cultural Grammar Synthesis" methodology.
+
+Translate this ${sourceLang} code to ${targetLang}, following these principles:
+
+1. IDENTIFY STRUCTURAL INVARIANTS (what must be preserved):
+- State management patterns
+- Effect handling patterns
+- Composition patterns
+- Control flow semantics
+
+2. EXTRACT SOURCE GRAMMAR:
+- How does ${sourceLang} organize these invariants?
+- What are the paradigm-specific patterns?
+
+3. SYNTHESIZE TARGET GRAMMAR:
+- How does ${targetLang} express the same invariants?
+- What are idiomatic ${targetLang} patterns for this?
+
+4. TRANSLATE with full reasoning:
+- Show the translated code
+- Explain each synthesis point (Source pattern → Target pattern)
+- Document what's preserved vs what's transformed
+
+Format your response EXACTLY like this:
+
+✨ TRANSLATED CODE:
+
+[Full idiomatic ${targetLang} code here]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧠 SYNTHESIS POINTS:
+
+✓ [Pattern 1]: [Source approach] → [Target approach]
+Rationale: [Why this translation preserves the invariant]
+
+✓ [Pattern 2]: [Source approach] → [Target approach]
+Rationale: [Why this translation preserves the invariant]
+
+[Continue for all key patterns...]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 KEY INSIGHT:
+
+[1-2 sentence summary of what makes this translation work]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Source code to translate:
+
+\`\`\`${sourceLang}
+${inputCode}
+\`\`\`
+
+Be thorough but concise. Make the target code genuinely idiomatic.`;
+
+const response = await fetch('https://api.anthropic.com/v1/messages', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'x-api-key': apiKey,
+'anthropic-version': '2023-06-01'
+},
+body: JSON.stringify({
+model: 'claude-sonnet-4-20250514',
+max_tokens: 4096,
+messages: [{
+role: 'user',
+content: prompt
+}]
+})
+});
+
+if (!response.ok) {
+const error = await response.json();
+throw new Error(error.error?.message || 'API request failed');
+}
+
+const data = await response.json();
+const translation = data.content[0].text;
+
+output.innerHTML = `<pre>${translation}</pre>`;
+
+// Save API key for next time
+localStorage.setItem('claudeApiKey', apiKey);
+
+} catch (error) {
+output.innerHTML = `<div class="error"><strong>Error:</strong> ${error.message}<br><br>Make sure your API key is correct and you have credits available.</div>`;
+} finally {
+btn.disabled = false;
+}
+}
+
+// Load saved API key on page load
+window.addEventListener('DOMContentLoaded', () => {
+const savedKey = localStorage.getItem('claudeApiKey');
+if (savedKey) {
+document.getElementById('apiKey').value = savedKey;
+document.getElementById('apiKeyStatus').innerHTML = '<div class="success-msg">✓ API key loaded from previous session</div>';
+}
+});
+
+// Save API key when changed
+document.getElementById('apiKey').addEventListener('change', (e) => {
+if (e.target.value.trim()) {
+localStorage.setItem('claudeApiKey', e.target.value.trim());
+document.getElementById('apiKeyStatus').innerHTML = '<div class="success-msg">✓ API key saved</div>';
+}
+});
+</script>
+</body>
+</html>
